@@ -3,10 +3,14 @@ from datetime import datetime
 from constants import (
     LINERU_SERVICE_URL,
     LINERU_SERVICE_KEY,
-    NIT
+    NIT,
+    FGA_API_KEY_URL,
+    PASSWORD_API_KEY_FGA,
+    USERNAME_API_KEY_FGA,
+    FGA_UPDATE_BALANCE_URL
 )
 
-def lineru_get_applications(credit_reference: str, cutoff_date: str):
+def lineru_get_applications(credit_reference: str, cutoff_date: str, value_from_csv: int):
     url = f"{LINERU_SERVICE_URL}/api/applications/{credit_reference}/calculator?date={cutoff_date}&status=1"
     headers = {"X-Api-Key": LINERU_SERVICE_KEY,
                "Content-Type": "application/json"
@@ -17,13 +21,11 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str):
         # Request was unsuccessful
         print(f"Request failed with status code: {response.status_code}, reference:{credit_reference}")
 
-    valor_comision_reportado = response.json()["fga_by_month"][cutoff_date[:7]]
-
     balance_update_obj = {
         'nit': NIT,
         'cedula': str(response["document"]),
         'pagare': credit_reference,
-        'valor_comision_reportado': int(valor_comision_reportado),
+        'valor_comision_reportado': value_from_csv,
         'saldo_capital': int(response["principal"]),
         'saldo_total': int(response["balance"]),
         'fecha_corte': cutoff_date,
@@ -53,10 +55,16 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str):
     return balance_update_obj
 
 
-def fga_update_balance_webservice():
-    url = f"{LINERU_SERVICE_URL}/api/applications/{credit_reference}/calculator?date={cutoff_date}&status=1"
-    headers = {"X-Api-Key": LINERU_SERVICE_KEY,
+
+def fga_get_bearer_token():
+    return
+
+
+def fga_update_balance_webservice(body_from_lineru_webservice):
+    url = FGA_UPDATE_BALANCE_URL
+    fga_api_key = fga_get_bearer_token()
+    headers = {"Authorization": f"Bearer {fga_api_key}",
                "Content-Type": "application/json"
     }
-    response = requests.get(url, headers=headers)
+    response = requests.post(url, headers=headers, body=body_from_lineru_webservice)
     return
