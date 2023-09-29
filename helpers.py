@@ -33,3 +33,9 @@ def calculate_default(due_date: str, cutoff: str):
         return str(res - 1)
     else:
         return str(1)
+
+
+
+def create_csv(list_of_values, filename: str):
+    df = pd.DataFrame({'Values': list_of_values})
+    df.to_csv(filename, index=False, header=False, sep=' ')

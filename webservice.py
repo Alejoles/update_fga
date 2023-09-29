@@ -69,5 +69,4 @@ def fga_update_balance_webservice(body_from_lineru_webservice, bearer_token):
     response = requests.post(url, headers=headers, json=body_from_lineru_webservice)
     if response.status_code != 200:
         failed_fga_update = response.json()
-        return failed_fga_update
-    return
+    return failed_fga_update
