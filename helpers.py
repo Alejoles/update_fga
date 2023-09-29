@@ -7,9 +7,8 @@ def read_csv_pandas():
     file_path = 'file.csv'
     # Read the CSV file into a DataFrame
     df = pd.read_csv(file_path)
-    print(df)
-    # Select the two columns you want to keep (replace 'column1' and 'column2' with the actual column names)
-    selected_columns = df[['Agosto', 'fecha-corte']]
+    # Select the three columns you want to keep
+    selected_columns = df[['Referencia credito', 'Agosto', 'fecha-corte']]
     return selected_columns
 
 
@@ -21,13 +20,13 @@ def filter_data(df):
 
 def calculate_default(due_date: str, cutoff: str):
     res = 0
-    time_format = "%Y-%m-%d"  # Asumiendo un formato de fecha como "YYYY-MM-DD"
+    time_format = "%Y-%m-%d"  # Asumiendo un formato de fecha como "YYYY-MM-DD HH-MM-SS"
 
     due_date_time = datetime.strptime(due_date, time_format)
     cutoff_time = datetime.strptime(cutoff, time_format)
 
     while due_date_time < cutoff_time:
-        due_date_time = due_date_time.replace(year=due_date_time.year + 1)
+        due_date_time = due_date_time.replace(month=due_date_time.month + 1)
         res += 1
 
     if res > 2:
