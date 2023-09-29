@@ -18,11 +18,12 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str, value_from_
     headers = {"X-Api-Key": LINERU_SERVICE_KEY,
                "Content-Type": "application/json"
     }
-    response = requests.get(url, headers=headers)
+    resp = requests.get(url, headers=headers)
     # Check the response status code
-    if response.status_code != 200:
+    response = resp.json()
+    if resp.status_code != 200:
         # Request was unsuccessful
-        print(f"Request failed with status code: {response.status_code}, reference:{credit_reference}")
+        print(f"Request failed with status code: {resp.status_code}, reference:{credit_reference}")
         failed_lineru_reference = credit_reference
 
     balance_update_obj = {
@@ -67,6 +68,12 @@ def fga_update_balance_webservice(body_from_lineru_webservice, bearer_token):
         "Content-Type": "application/json"
     }
     response = requests.post(url, headers=headers, json=body_from_lineru_webservice)
-    if response.status_code != 200:
+    response_json = response.json()
+    if response.status_code != 200 and response.status_code != 422:
         failed_fga_update = response.json()
-    return failed_fga_update
+        print("Failed in updating fga: ", response_json)
+    elif response.status_code == 401:
+        print("Unauthenticated")
+    elif response.status_code != 200:
+        print("Only different from 200: ", response_json)
+    return response.json(), failed_fga_update
