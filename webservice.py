@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import json
 from constants import (
     LINERU_SERVICE_URL,
     LINERU_SERVICE_KEY,
@@ -57,14 +58,27 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str, value_from_
 
 
 def fga_get_bearer_token():
-    return
-
-
-def fga_update_balance_webservice(body_from_lineru_webservice):
-    url = FGA_UPDATE_BALANCE_URL
-    fga_api_key = fga_get_bearer_token()
-    headers = {"Authorization": f"Bearer {fga_api_key}",
-               "Content-Type": "application/json"
+    url = FGA_API_KEY_URL
+    headers = {
+        "Content-Type": "application/json"
     }
-    response = requests.post(url, headers=headers, body=body_from_lineru_webservice)
+    body_dict = {
+        "username": USERNAME_API_KEY_FGA,
+        "password": PASSWORD_API_KEY_FGA
+    }
+    response = requests.post(url, headers=headers, json=body_dict)
+    if response.status_code != 200:
+        print("Failed to get bearer token from FGA, error:", response.json())
+        raise Exception
+    return response.json()["access_token"]
+
+
+def fga_update_balance_webservice(body_from_lineru_webservice, bearer_token):
+    url = FGA_UPDATE_BALANCE_URL
+    headers = {
+        "Authorization": f"Bearer {bearer_token}",
+        "Content-Type": "application/json"
+    }
+    body = json.dumpsbody_from_lineru_webservice
+    response = requests.post(url, headers=headers, json=body)
     return
