@@ -43,6 +43,46 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str, value_from_
     return balance_update_obj, failed_lineru_reference
 
 
+def lineru_get_applications_without_values(credit_reference: str, cutoff_date: str):
+    failed_lineru_reference = ""
+    cutoff_date_modified = cutoff_date.split("-")[:2]
+    cutoff_date_modified_final = cutoff_date_modified[0] + "-" + cutoff_date_modified[1]
+    url = f"{LINERU_SERVICE_URL}/api/applications/{credit_reference}/calculator?date={cutoff_date}&status=1"
+    headers = {"X-Api-Key": LINERU_SERVICE_KEY,
+               "Content-Type": "application/json"
+    }
+    resp = requests.get(url, headers=headers)
+    # Check the response status code
+    response = resp.json()
+    if resp.status_code != 200:
+        # Request was unsuccessful
+        print(f"Request failed with status code: {resp.status_code}, reference:{credit_reference}")
+        failed_lineru_reference = credit_reference
+    print("Response:    ", response["fga_by_month"])
+    if response["fga_by_month"] != []:
+        if cutoff_date_modified_final in response["fga_by_month"].keys():
+            object_to_return = {
+                'pagare': credit_reference,
+                'fecha_corte': cutoff_date,
+                'valor_comision_reportado': str(response["fga_by_month"][cutoff_date_modified_final]),
+            }
+            print("YES")
+        else:
+            object_to_return = {
+            'pagare': credit_reference,
+            'fecha_corte': cutoff_date,
+            'valor_comision_reportado': "",
+        }
+    else:
+        object_to_return = {
+            'pagare': credit_reference,
+            'fecha_corte': cutoff_date,
+            'valor_comision_reportado': "",
+        }
+
+    return object_to_return, failed_lineru_reference
+
+
 
 def fga_get_bearer_token():
     url = FGA_API_KEY_URL

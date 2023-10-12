@@ -1,4 +1,4 @@
-from helpers import (read_csv_pandas, filter_data, create_csv)
+from helpers import (read_csv_pandas_selected_columns, filter_data, create_csv)
 from webservice import (lineru_get_applications, fga_get_bearer_token, fga_update_balance_webservice)
 
 
@@ -8,7 +8,7 @@ if __name__ == "__main__":
     failed_fga_update_list = []
     success_lineru_list = []
     success_fga_update_list = []
-    df = read_csv_pandas()
+    df = read_csv_pandas_selected_columns()
     df_filtered = filter_data(df)
     bearer_token = fga_get_bearer_token()
     count = 0
