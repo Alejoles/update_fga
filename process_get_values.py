@@ -3,7 +3,7 @@ from webservice import lineru_get_applications_without_values
 
 
 if __name__ == "__main__":
-    money_left_to_process = 1048000
+    money_left_to_process = 6344743 #TODO: Este valor cambia cada mes
     procesing_money = 0
     failed_lineru_list = []
     success_lineru_list = []
@@ -13,10 +13,11 @@ if __name__ == "__main__":
         failed_lineru_list = []
         success_lineru_list = []
         pagare = str(row["referencia_credito"])
-        fecha_corte = "2023-09-30"
+        fecha_corte = "2023-10-31" #TODO: Este valor cambia cada mes
         print("Archivos procesados: ", count)
         body_lineru, failed_lineru_webservice = lineru_get_applications_without_values(pagare, fecha_corte)
         if body_lineru["valor_comision_reportado"] == "":
+            print(body_lineru)
             continue
         procesing_money += get_value_from_lineru_body(body_lineru)
         print("Procesing Money: ", procesing_money)

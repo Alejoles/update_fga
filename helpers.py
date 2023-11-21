@@ -4,11 +4,11 @@ from datetime import datetime
 # Function that reads the csv file and returns the data needed.
 def read_csv_pandas_selected_columns():
     # Replace 'your_file.csv' with the path to your CSV file
-    file_path = 'file.csv'
+    file_path = 'data_review.csv'
     # Read the CSV file into a DataFrame
     df = pd.read_csv(file_path)
     # Select the three columns you want to keep
-    selected_columns = df[['Referencia credito', 'Agosto', 'fecha-corte']]
+    selected_columns = df[['referencia_credito', 'datos_garantia.fecha_desembolso']]
     return selected_columns
 
 

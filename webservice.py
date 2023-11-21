@@ -34,11 +34,25 @@ def lineru_get_applications(credit_reference: str, cutoff_date: str, value_from_
         'saldo_capital': int(response["principal"]),
         'saldo_total': int(response["balance"]),
         'fecha_corte': cutoff_date,
-        'num_cuotas_mora': calculate_default(str(response["due_date"]), cutoff_date),
-        'fec_inicio_mora': str(response["due_date"]),
+        'num_cuotas_mora': "",
+        'fec_inicio_mora': "",
         'fecha_cancelacion': "", # En FGA se envia vacio al parecer
         'estado_operacion': "M",
     }
+
+    if response["is_paid"]:
+        balance_update_obj["estado_operacion"] = "C"
+        balance_update_obj['fecha_cancelacion'] = str(response["closed_at"])
+    else:
+		# compare if date is greater or equal than today
+        date1 = datetime.strptime(response["due_date"], "%Y-%m-%d")
+        date2 = datetime.strptime(cutoff_date, "%Y-%m-%d")
+        if date1 >= date2:
+            balance_update_obj["estado_operacion"] = "V"
+        else:
+            balance_update_obj["num_cuotas_mora"] = calculate_default(str(response["due_date"]), cutoff_date),
+            balance_update_obj["fec_inicio_mora"] = str(response["due_date"])
+            balance_update_obj["estado_operacion"] = "M"
 
     return balance_update_obj, failed_lineru_reference
 
