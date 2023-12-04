@@ -10,13 +10,12 @@ if __name__ == "__main__":
     success_lineru_list = []
     success_fga_update_list = []
     df = read_csv_pandas_selected_columns()
-    #df_filtered = filter_data(df)
     bearer_token = fga_get_bearer_token()
     count = 0
     for index, row in df.iterrows():
         pagare = str(row["referencia_credito"])
         valor_declarado = 1 #TODO: cambia
-        fecha_corte = "2023-10-31" #TODO: cambia
+        fecha_corte = "2023-11-30" #TODO: cambia
         print("Archivos procesados: ", count)
         body_lineru, failed_lineru_webservice = lineru_get_applications(pagare, fecha_corte, valor_declarado)
         success_lineru_list.append(body_lineru)
